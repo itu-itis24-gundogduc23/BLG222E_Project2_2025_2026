@@ -126,8 +126,9 @@ module CPUSystemSimulation();
         
         SetRegisters(16'h7777);
         F.CheckValues(CPUSys.ALUSys.RF.R2.Q, 16'h7777, test_no, "R2");
-        rg.Reset();
+        rg.ActivateReset();
         clk.Clock();
+        rg.DeactivateReset();
         F.CheckValues(CPUSys.ALUSys.RF.R2.Q, 16'h0000, test_no, "R2");
         CPUSys.ALUSys.ARF.PC.Q = 16'h0056;
 
@@ -167,26 +168,27 @@ module CPUSystemSimulation();
             clk.Clock();
             clock_count = clock_count + 1;
         end
-        F.CheckValues(CPUSys.ALUSys.RF.R2.Q, 16'h0004, test_no, "LSL");
-
-        //Test 5 ADD R1 R1 R2
+        F.CheckValues(CPUSys.ALUSys.OutA, 16'h0004, test_no, "OutA");
+        F.CheckValues(CPUSys.ALUSys.ALUOut, 16'h0008, test_no, "ALUOut");
+        F.CheckValues(CPUSys.ALUSys.RF.R2.Q, 16'h0004, test_no, "R2");
+        
+        //Test 5 ADD PC AR SP
         test_no = 5;
         ClearRegisters();
-        CPUSys.ALUSys.RF.R1.Q = 16'h0001;
-        CPUSys.ALUSys.RF.R2.Q = 16'h0002;
-        CPUSys.ALUSys.IMU.IR.IROut = 16'h3E4A;
+        CPUSys.ALUSys.ARF.AR.Q = 16'h3550;
+        CPUSys.ALUSys.IMU.IR.IROut = 16'h4CA6;
         CPUSys.T = 12'b0000_0000_0100;
         while (CPUSys.T != 12'b0000_0000_0001 && clock_count <= 15) begin
             clk.Clock();
             clock_count = clock_count + 1;
         end
-        F.CheckValues(CPUSys.ALUSys.RF.R1.Q, 16'h0003, test_no, "ADD");
+        F.CheckValues(CPUSys.ALUSys.ARF.PC.Q, 16'h364F, test_no, "PC");
         
         //Test 6 MOV AR, R4
         test_no = 6;
         ClearRegisters();
         SetRegistersRx();
-        CPUSys.ALUSys.IMU.IR.IROut = 16'h59F0;                
+        CPUSys.ALUSys.IMU.IR.IROut = 16'h5970;                
         CPUSys.T = 12'b0000_0000_0100;
         while (CPUSys.T != 12'b0000_0000_0001 && clock_count <= 15) begin
             clk.Clock();

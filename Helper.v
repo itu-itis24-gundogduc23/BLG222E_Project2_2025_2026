@@ -115,9 +115,14 @@ endmodule
 module ResetGenerator;
     reg reset;
     
-    task Reset;
+    task ActivateReset;
         begin
             reset = 1; #5; reset=0; #5;
+        end
+    endtask
+    task DeactivateReset;
+        begin
+            reset = 1; #5;
         end
     endtask
 endmodule
